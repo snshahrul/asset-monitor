@@ -527,8 +527,8 @@ export function generateRepairPDF(asset, repair, companyName = 'Asset Integrity 
     </table>
 
     ${buildSignatureRow([
-      { name: repair.personIncharge || repair.technician, label: 'Person Incharge' },
-      { name: repair.inspectionName, label: 'Inspector' },
+      { label: 'Person Incharge' },
+      { label: 'Inspector' },
       { label: 'Date' }
     ])}
 
@@ -580,8 +580,8 @@ export function generateAlterationPDF(asset, alteration, companyName = 'Asset In
     </table>
 
     ${buildSignatureRow([
-      { name: alteration.engineer, label: 'Engineer' },
-      { name: alteration.approvedBy, label: 'Approved By' },
+      { label: 'Engineer' },
+      { label: 'Approved By' },
       { label: 'Date' }
     ])}
 
