@@ -5,12 +5,14 @@ import AnalyticsCharts from '../features/dashboard/AnalyticsCharts';
 import InspectionCalendar from '../features/dashboard/InspectionCalendar';
 import AlertSystem from '../features/dashboard/AlertSystem';
 import RBIMatrix from '../features/dashboard/RBIMatrix';
+import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
   const assets = useAssetStore(s => s.assets);
   const selectedId = useAssetStore(s => s.selectedAssetId);
   const selectAsset = useAssetStore(s => s.selectAsset);
   const alerts = useAlertStore(s => s.alerts);
+  const navigate = useNavigate();
 
   return (
     <div className="space-y-4">
@@ -48,6 +50,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between">
                       <strong onClick={() => selectAsset(a.id)} className="text-sm text-gray-200 font-mono cursor-pointer hover:text-primary-900">{a.name}</strong>
                       <span className={'text-xs font-semibold px-2 py-0.5 rounded-full ' + (a.status === 'critical' ? 'bg-red-900 text-red-300' : a.status === 'warning' ? 'bg-amber-900 text-amber-300' : 'bg-emerald-900 text-emerald-300')}>{a.status}</span>
+                    <button onClick={(e) => { e.stopPropagation(); navigate(`/equipment/edit/${a.id}`); }} className="text-xs text-gray-500 hover:text-primary-900 p-1">✏️</button>
                     </div>
                     <div onClick={() => selectAsset(a.id)} className="text-xs text-gray-400 mt-1 cursor-pointer">{a.type} | {a.location || 'No location'} | {a.currentThick?.toFixed(2)} mm</div>
                   </div>

@@ -6,6 +6,7 @@ import NewEquipment from './pages/NewEquipment';
 import NewInspection from './pages/NewInspection';
 import NewRepair from './pages/NewRepair';
 import NewAlteration from './pages/NewAlteration';
+import EditEquipment from './pages/EditEquipment';
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/inspection/new" element={<NewInspection />} />
         <Route path="/repair/new" element={<NewRepair />} />
         <Route path="/alteration/new" element={<NewAlteration />} />
+        <Route path="/equipment/edit/:id" element={<EditEquipment />} />
       </Route>
     </Routes>
   );
