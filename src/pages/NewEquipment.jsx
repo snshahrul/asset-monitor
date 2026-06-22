@@ -38,7 +38,7 @@ export default function NewEquipment() {
   const [calcMAWP, setCalcMAWP] = useState('');
 
   const calculateTmin = () => {
-    const P = parseFloat(designPressure) || 0;
+    const P = (parseFloat(designPressure) || 0) / 10; // bar → MPa
     const R = (parseFloat(shellDia) || 0) / 2;
     const S = parseFloat(allowStress) || 138;
     const E = parseFloat(jointEff) || 0.85;
@@ -61,7 +61,8 @@ export default function NewEquipment() {
     const tActual = t - CA;
     if (tActual > 0 && R > 0 && S > 0 && E > 0) {
       const mawpCirc = (S * E * tActual) / (R + 0.6 * tActual);
-      setCalcMAWP(mawpCirc.toFixed(2));
+      const mawpMpa = mawpCirc;
+      setCalcMAWP((mawpMpa * 10).toFixed(2)); // MPa → bar
     }
   };
 
