@@ -93,30 +93,32 @@ const sharedStyles = `
     color: #555;
   }
 
-  /* Equipment Info Grid */
-  .info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+  /* Equipment Info Table */
+  .info-table {
+    width: 100%;
+    border-collapse: collapse;
     margin-bottom: 18px;
   }
-  .info-box {
-    background: #f8f9fa;
-    padding: 10px 12px;
-    border-radius: 6px;
-    border-left: 4px solid __COLOR__;
+  .info-table td {
+    padding: 7px 10px;
+    border: 1px solid #e0e0e0;
+    font-size: 10px;
+    vertical-align: middle;
   }
-  .info-box h4 {
-    font-size: 9px;
-    color: #999;
+  .info-table .info-label {
+    width: 130px;
+    font-size: 8px;
+    font-weight: 700;
+    color: #fff;
+    background: __COLOR__;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 3px;
+    text-align: center;
   }
-  .info-box p {
-    font-size: 12px;
+  .info-table .info-value {
     font-weight: 600;
     color: #1a1a1a;
+    background: #fff;
   }
 
   /* Section Titles */
@@ -349,15 +351,18 @@ function buildEquipmentGrid(asset, color, extraItems = [], prependItems = []) {
     { label: 'Design Data', value: `Nominal: ${asset.nominal || 'N/A'}mm | T-Min: ${asset.minRequired || 'N/A'}mm` },
     ...extraItems
   ];
-  return `
-    <div class="info-grid">
-      ${items.map(i => `
-        <div class="info-box">
-          <h4>${i.label}</h4>
-          <p>${i.value}</p>
-        </div>
-      `).join('')}
-    </div>`;
+  let rows = '';
+  for (let i = 0; i < items.length; i += 2) {
+    const left = items[i];
+    const right = items[i + 1];
+    rows += `<tr>
+      <td class="info-label">${left.label}</td>
+      <td class="info-value">${left.value}</td>
+      ${right ? `<td class="info-label">${right.label}</td>
+      <td class="info-value">${right.value}</td>` : '<td class="info-label"></td><td class="info-value"></td>'}
+    </tr>`;
+  }
+  return `<table class="info-table"><tbody>${rows}</tbody></table>`;
 }
 
 function buildThicknessTable(gridData, color) {
