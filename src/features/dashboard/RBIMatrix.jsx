@@ -1,5 +1,11 @@
 ﻿export default function RBIMatrix({ assets }) {
-  const getLikelihood = (asset) => {
+ const getLikelihood = (asset) => {
+    const remainingAboveTmin = asset.currentThick - asset.minRequired;
+    
+    // If already below T-Min, likelihood is extreme
+    if (remainingAboveTmin < 0) return 5;
+    if (remainingAboveTmin < 1) return 4;
+    
     const cr = asset.corrosionRate || 0.1;
     if (cr > 0.3) return 5;
     if (cr > 0.2) return 4;
@@ -8,8 +14,17 @@
     return 1;
   };
 
-  const getConsequence = (asset) => {
-    const rem = asset.corrosionRate > 0 ? (asset.currentThick - asset.minRequired) / asset.corrosionRate : 100;
+ const getConsequence = (asset) => {
+    const remainingAboveTmin = asset.currentThick - asset.minRequired;
+    const percentAbove = asset.minRequired > 0 ? (remainingAboveTmin / asset.minRequired) * 100 : 0;
+    
+    // Consequence based on how close to T-Min + remaining life
+    if (remainingAboveTmin < 0) return 5;  // Already below T-Min — EXTREME
+    if (remainingAboveTmin < 1) return 5;  // Less than 1mm above — EXTREME
+    if (remainingAboveTmin < 2) return 4;  // Less than 2mm above — HIGH
+    if (remainingAboveTmin < 5) return 3;  // Less than 5mm above — MEDIUM
+    
+    const rem = asset.corrosionRate > 0 ? remainingAboveTmin / asset.corrosionRate : 100;
     if (rem < 1) return 5;
     if (rem < 3) return 4;
     if (rem < 5) return 3;
