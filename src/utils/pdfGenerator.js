@@ -340,9 +340,10 @@ function buildSignatureRow(signatures) {
     </div>`;
 }
 
-function buildEquipmentGrid(asset, color, extraItems = []) {
+function buildEquipmentGrid(asset, color, extraItems = [], prependItems = []) {
   const items = [
     { label: 'Equipment ID', value: asset.name },
+    ...prependItems,
     { label: 'Type / Location', value: `${asset.type} | ${asset.location || 'N/A'}` },
     { label: 'Design Code', value: asset.designCode || 'N/A' },
     { label: 'Design Data', value: `Nominal: ${asset.nominal || 'N/A'}mm | T-Min: ${asset.minRequired || 'N/A'}mm` },
@@ -449,8 +450,10 @@ export function generateInspectionPDF(asset, inspection, companyName = 'Asset In
 </head>
 <body>
   <div class="page">
-    ${buildHeader(companyName, 'Thickness Inspection Report &mdash; API 510', reportNumber, color, initials)}
-    ${buildEquipmentGrid(asset, color, filteredItems)}
+    ${buildHeader(companyName, 'Thickness Inspection Report', reportNumber, color, initials)}
+    ${buildEquipmentGrid(asset, color, filteredItems, [
+      { label: 'API 510', value: 'Thickness Inspection' }
+    ])}
 
     <div class="section-title"><span class="sec-icon">&#9654;</span> Thickness Measurements (CML Grid)</div>
     ${buildThicknessTable(inspection.gridData, color)}
@@ -468,7 +471,7 @@ export function generateInspectionPDF(asset, inspection, companyName = 'Asset In
     </div>
 
     ${buildSignatureRow([
-      { name: inspection.inspector, label: 'Inspector' },
+      { label: 'Inspector' },
       { label: 'Reviewed by' },
       { label: 'Date' }
     ])}
