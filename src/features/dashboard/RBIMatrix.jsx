@@ -27,21 +27,21 @@
 
     let fluidScore = 1;
     if (['lethal', 'h2s'].some(f => fluid.includes(f))) fluidScore = 5;
-    else if (['flammable', 'hydrocarbon', 'process gas', 'hydrogen', 'lpg', 'propane'].some(f => fluid.includes(f))) fluidScore = 4;
+    else if (['flammable', 'hydrocarbon', 'hydrogen', 'lpg', 'propane'].some(f => fluid.includes(f))) fluidScore = 4;
     else if (['steam', 'chemical', 'acid', 'caustic', 'ammonia', 'chlorine'].some(f => fluid.includes(f))) fluidScore = 3;
-    else if (['oil', 'fuel', 'solvent'].some(f => fluid.includes(f))) fluidScore = 2;
+    else if (['process gas', 'oil', 'fuel', 'solvent', 'water'].some(f => fluid.includes(f))) fluidScore = 2;
 
     const press = parseFloat(asset.operatingPress || asset.sensors?.pressure || 0);
     let pressureScore = 1;
-    if (press > 30) pressureScore = 5;
-    else if (press > 15) pressureScore = 4;
-    else if (press > 7) pressureScore = 3;
-    else if (press > 3) pressureScore = 2;
+    if (press > 25) pressureScore = 5;
+    else if (press > 12) pressureScore = 4;
+    else if (press > 6) pressureScore = 3;
+    else if (press > 2) pressureScore = 2;
 
     const temp = parseFloat(asset.operatingTemp || asset.sensors?.temperature || 0);
     let tempScore = 1;
-    if (temp > 350) tempScore = 5;
-    else if (temp > 250) tempScore = 4;
+    if (temp > 300) tempScore = 5;
+    else if (temp > 200) tempScore = 4;
     else if (temp > 100) tempScore = 3;
     else if (temp > 50) tempScore = 2;
 
@@ -50,7 +50,11 @@
     if (remainingAboveTmin < 0) wallScore = 5;
     else if (remainingAboveTmin < 2) wallScore = 3;
 
-    return Math.round(fluidScore * 0.35 + pressureScore * 0.25 + tempScore * 0.25 + wallScore * 0.15);
+    let statusScore = 1;
+    if (asset.status === 'critical') statusScore = 3;
+    else if (asset.status === 'warning') statusScore = 2;
+
+    return Math.round(fluidScore * 0.25 + pressureScore * 0.2 + tempScore * 0.2 + wallScore * 0.15 + statusScore * 0.2);
   };
 
   const getRiskLevel = (likelihood, consequence) => {
