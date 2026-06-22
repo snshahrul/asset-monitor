@@ -407,7 +407,7 @@ function buildThicknessTable(gridData, color) {
 function buildCalcGrid(inspection) {
   if (!inspection.avgThickness && !inspection.minThickness) return '';
   return `
-    <div class="section-title"><span class="sec-icon">&#9654;</span> Calculations (API 510 &sect;5.6)</div>
+    <div class="section-title"><span class="sec-icon">&#9654;</span> Remaining Life Calculation Base on API 510</div>
     <div class="calc-grid">
       <div class="calc-box">
         <div class="calc-label">Average Thickness</div>
