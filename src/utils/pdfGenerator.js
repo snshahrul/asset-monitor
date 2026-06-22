@@ -533,7 +533,7 @@ export function generateRepairPDF(asset, repair, companyName = 'Asset Integrity 
 }
 
 export function generateAlterationPDF(asset, alteration, companyName = 'Asset Integrity Management') {
-  const reportNumber = `ALT-${asset.name}-${alteration.date}-${alteration.id?.substr(-4) || '0001'}`;
+  const reportNumber = `ALT-${asset.name}-${alteration.startDate || alteration.date}-${alteration.id?.substr(-4) || '0001'}`;
   const color = '#6a1b9a';
   const initials = companyName.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
   const css = sharedStyles.replace(/__COLOR__/g, color);
@@ -549,26 +549,31 @@ export function generateAlterationPDF(asset, alteration, companyName = 'Asset In
   <div class="page">
     ${buildHeader(companyName, 'Alteration Record', reportNumber, color, initials)}
     ${buildEquipmentGrid(asset, color, [
-      { label: 'Alteration Date', value: alteration.date },
-      { label: 'Alteration Type', value: alteration.type || 'N/A' },
-      { label: 'Design Code', value: alteration.code || 'N/A' },
-      { label: 'Engineer', value: alteration.engineer || 'N/A' }
+      { label: 'Construction Code', value: alteration.originalCode || 'N/A' },
+      { label: 'Alteration Code', value: alteration.alterationCode || 'N/A' },
+      { label: 'Start Date', value: alteration.startDate || alteration.date || 'N/A' },
+      { label: 'Finish Date', value: alteration.finishDate || 'N/A' }
     ])}
 
     <div class="section-title"><span class="sec-icon">&#9654;</span> Alteration Details</div>
     <table class="detail-table">
-      <tr><td>Drawing #</td><td>${alteration.drawing || 'N/A'}</td></tr>
-      <tr><td>Description</td><td>${alteration.description || 'N/A'}</td></tr>
-      <tr><td>Impact on Design</td><td>${alteration.impact || 'N/A'}</td></tr>
-      <tr><td>Hydrotest</td><td>${alteration.hydro || 'N/A'}</td></tr>
-      <tr><td>NDT</td><td>${alteration.ndt || 'N/A'} &mdash; ${alteration.ndtResult || 'N/A'}</td></tr>
-      <tr><td>AI Sign-off</td><td>${alteration.ai || 'N/A'}</td></tr>
-      <tr><td>Regulatory</td><td>${alteration.regulatory || 'N/A'}</td></tr>
+      <tr><td>Type of Alteration</td><td>${alteration.type || 'N/A'}</td></tr>
+      <tr><td>Engineer</td><td>${alteration.engineer || 'N/A'}</td></tr>
+      <tr><td>Welder Name / ID</td><td>${alteration.welderName || 'N/A'} / ${alteration.welderId || 'N/A'}</td></tr>
+      <tr><td>Design Approved No.</td><td>${alteration.designApprovedNo || 'N/A'}</td></tr>
+      <tr><td>Date Approval / Approved By</td><td>${alteration.dateApproval || 'N/A'} / ${alteration.approvedBy || 'N/A'}</td></tr>
+      <tr><td>Shell &amp; Head Material</td><td>${alteration.shellHeadMaterial || 'N/A'}</td></tr>
+      <tr><td>Replacement Material</td><td>${alteration.replacementMaterial || 'N/A'}</td></tr>
+      <tr><td>NDT Method</td><td>${alteration.ndt || 'N/A'}</td></tr>
+      <tr><td>Design Pressure / Temp</td><td>${alteration.designPressure || '—'} bar / ${alteration.designTemp || '—'}&deg;C</td></tr>
+      <tr><td>Hydrostatic Test</td><td>${alteration.hydrostatic || 'N/A'} ${alteration.hydrostaticPressure ? '(' + alteration.hydrostaticPressure + ' bar)' : ''}</td></tr>
+      <tr><td>Inspector Name</td><td>${alteration.inspectionName || 'N/A'}</td></tr>
+      <tr><td>Scope of Work</td><td>${alteration.scope || 'N/A'}</td></tr>
     </table>
 
     ${buildSignatureRow([
       { name: alteration.engineer, label: 'Engineer' },
-      { name: alteration.ai, label: 'AI Sign-off' },
+      { name: alteration.approvedBy, label: 'Approved By' },
       { label: 'Date' }
     ])}
 

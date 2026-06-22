@@ -211,22 +211,31 @@ export default function EquipmentDetail() {
           <p className="text-gray-500 text-xs py-8 text-center">No alteration records yet</p>
         ) : (
           <div className="space-y-2">
-            {folder.alterations.sort((a, b) => new Date(b.date) - new Date(a.date)).map(alt => (
+            {folder.alterations.sort((a, b) => new Date(b.startDate || b.date) - new Date(a.startDate || a.date)).map(alt => (
               <div key={alt.id} className="card px-4 py-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-gray-200">{alt.date}</span>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-semibold text-gray-200">{alt.startDate || alt.date}</span>
+                      {alt.finishDate && <span className="text-2xs text-gray-500">→ {alt.finishDate}</span>}
                       <span className="text-2xs text-gray-500">{alt.type}</span>
+                      <span className="text-2xs text-primary-900 font-semibold">{alt.alterationCode || ''}</span>
                     </div>
-                    <div className="text-2xs text-gray-500 mt-0.5">Engineer: {alt.engineer || 'N/A'} | Code: {alt.code || 'N/A'}</div>
+                    <div className="text-2xs text-gray-500 mt-0.5">Engineer: {alt.engineer || 'N/A'} | Welder: {alt.welderName || 'N/A'} ({alt.welderId || '—'})</div>
                   </div>
                 </div>
                 <div className="text-2xs text-gray-500 mt-2 space-y-0.5">
-                  <div><span className="text-gray-400">Drawing:</span> {alt.drawing || 'N/A'}</div>
-                  <div><span className="text-gray-400">Description:</span> {alt.description || 'N/A'}</div>
-                  <div><span className="text-gray-400">Impact:</span> {alt.impact || 'N/A'} | <span className="text-gray-400">Hydro:</span> {alt.hydro || 'N/A'}</div>
-                  <div><span className="text-gray-400">NDT:</span> {alt.ndt || 'N/A'} ({alt.ndtResult || 'N/A'}) | <span className="text-gray-400">AI:</span> {alt.ai || 'N/A'} | <span className="text-gray-400">Reg:</span> {alt.regulatory || 'N/A'}</div>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-0.5">
+                    <span><span className="text-gray-400">Construction Code:</span> {alt.originalCode || 'N/A'}</span>
+                    <span><span className="text-gray-400">Des. Approved No.:</span> {alt.designApprovedNo || 'N/A'}</span>
+                    <span><span className="text-gray-400">Approved By:</span> {alt.approvedBy || 'N/A'} | <span className="text-gray-400">Date:</span> {alt.dateApproval || 'N/A'}</span>
+                    <span><span className="text-gray-400">Shell Material:</span> {alt.shellHeadMaterial || 'N/A'}</span>
+                    <span><span className="text-gray-400">Replacement Mat.:</span> {alt.replacementMaterial || 'N/A'}</span>
+                    <span><span className="text-gray-400">NDT:</span> {alt.ndt || 'N/A'}</span>
+                    <span><span className="text-gray-400">Design P/T:</span> {alt.designPressure || '—'} bar / {alt.designTemp || '—'}°C</span>
+                    <span><span className="text-gray-400">Hydro:</span> {alt.hydrostatic || 'N/A'} {alt.hydrostaticPressure ? `(${alt.hydrostaticPressure} bar)` : ''} | <span className="text-gray-400">Inspector:</span> {alt.inspectionName || 'N/A'}</span>
+                  </div>
+                  {alt.scope && <div className="mt-1"><span className="text-gray-400">Scope:</span> {alt.scope}</div>}
                 </div>
                 <div className="flex gap-2 mt-2 pt-2 border-t border-dark-600">
                   <button onClick={() => handleAlterationPDF(alt)} className="text-primary-900 hover:text-primary-700 text-2xs flex items-center gap-1 font-semibold transition-colors">
