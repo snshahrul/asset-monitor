@@ -6,6 +6,7 @@ import ThicknessChart from '../features/trend/ThicknessChart';
 import DocumentUpload from '../features/documents/DocumentUpload';
 import { FileText } from 'lucide-react';
 import { generateInspectionPDF, generateRepairPDF, generateAlterationPDF, downloadPDF } from '../utils/pdfGenerator';
+import RiskAssessment from '../features/risk/RiskAssessment';
 
 export default function EquipmentDetail() {
   const { id } = useParams();
@@ -39,6 +40,7 @@ export default function EquipmentDetail() {
     { key: 'inspections', label: 'Inspections', count: folder.inspections.length },
     { key: 'repairs', label: 'Repairs', count: folder.repairs.length },
     { key: 'alterations', label: 'Alterations', count: folder.alterations.length },
+    { key: 'risk', label: 'Risk Assessment', count: null },
     { key: 'trend', label: 'Trend', count: null },
     { key: 'documents', label: 'Documents', count: (folder.documents || []).length },
   ];
@@ -231,6 +233,11 @@ export default function EquipmentDetail() {
             ))}
           </div>
         )
+      )}
+
+      {/* ===== RISK ASSESSMENT TAB ===== */}
+      {activeTab === 'risk' && (
+        <RiskAssessment assetId={asset.id} />
       )}
 
       {/* ===== TREND TAB ===== */}
