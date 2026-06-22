@@ -187,7 +187,7 @@ export default function EquipmentDetail() {
                     <span><span className="text-gray-400">Replacement Mat.:</span> {r.replacementMaterial || 'N/A'}</span>
                     <span><span className="text-gray-400">NDT:</span> {r.ndt || 'N/A'}</span>
                     <span><span className="text-gray-400">Design P/T:</span> {r.designPressure || '—'} bar / {r.designTemp || '—'}°C</span>
-                    <span><span className="text-gray-400">Hydro:</span> {r.hydrostatic || 'N/A'} | <span className="text-gray-400">Inspector:</span> {r.inspectionName || 'N/A'}</span>
+                    <span><span className="text-gray-400">Hydro:</span> {r.hydrostatic || 'N/A'} {r.hydrostaticPressure ? `(${r.hydrostaticPressure} bar)` : ''} | <span className="text-gray-400">Inspector:</span> {r.inspectionName || 'N/A'}</span>
                   </div>
                   {r.scope && <div className="mt-1"><span className="text-gray-400">Scope:</span> {r.scope}</div>}
                 </div>

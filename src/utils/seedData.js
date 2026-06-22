@@ -153,8 +153,8 @@ export function seedSampleData() {
             }
           ],
           repairs: [
-            { id: 'rep-101-1', startDate: '2026-01-15', finishDate: '2026-01-18', method: 'Weld Overlay', personIncharge: 'R. Ahmad', welderName: 'M. Faiz', welderId: 'WLD-0421', originalCode: 'ASME Section I', repairCode: 'ASME PCC-2', shellHeadMaterial: 'SA-516 Gr.70', replacementMaterial: 'E7018 Electrode', ndt: 'MPI + UT Thickness', designPressure: '10', designTemp: '200', hydrostatic: 'Yes', inspectionName: 'A. Rahman', scope: 'Weld overlay build-up on bottom drum shell at 180° location. 3-pass overlay using E7018 electrodes. Post-weld UT and MPI performed — acceptable.' },
-            { id: 'rep-101-2', startDate: '2025-04-20', finishDate: '2025-04-22', method: 'Tube Replacement', personIncharge: 'R. Ahmad', welderName: 'S. Tan', welderId: 'WLD-0387', originalCode: 'BS2790', repairCode: 'NBIC', shellHeadMaterial: 'SA-192', replacementMaterial: 'SA-210 Gr.A1', ndt: 'Radiography + PWHT', designPressure: '8.5', designTemp: '180', hydrostatic: 'Yes', inspectionName: 'A. Rahman', scope: 'Replaced 3 water tubes in Top Drum — Tube Bank 3 due to wall thinning. PWHT performed per WPS. RT confirmed sound welds. Hydrotest passed at 1.3x MAWP.' }
+            { id: 'rep-101-1', startDate: '2026-01-15', finishDate: '2026-01-18', method: 'Weld Overlay', personIncharge: 'R. Ahmad', welderName: 'M. Faiz', welderId: 'WLD-0421', originalCode: 'ASME Section I', repairCode: 'ASME PCC-2', shellHeadMaterial: 'SA-516 Gr.70', replacementMaterial: 'E7018 Electrode', ndt: 'MPI + UT Thickness', designPressure: '10', designTemp: '200', hydrostatic: 'Yes', hydrostaticPressure: '15', inspectionName: 'A. Rahman', scope: 'Weld overlay build-up on bottom drum shell at 180° location. 3-pass overlay using E7018 electrodes. Post-weld UT and MPI performed — acceptable.' },
+            { id: 'rep-101-2', startDate: '2025-04-20', finishDate: '2025-04-22', method: 'Tube Replacement', personIncharge: 'R. Ahmad', welderName: 'S. Tan', welderId: 'WLD-0387', originalCode: 'BS2790', repairCode: 'NBIC', shellHeadMaterial: 'SA-192', replacementMaterial: 'SA-210 Gr.A1', ndt: 'Radiography + PWHT', designPressure: '8.5', designTemp: '180', hydrostatic: 'Yes', hydrostaticPressure: '13', inspectionName: 'A. Rahman', scope: 'Replaced 3 water tubes in Top Drum — Tube Bank 3 due to wall thinning. PWHT performed per WPS. RT confirmed sound welds. Hydrotest passed at 1.3x MAWP.' }
           ],
           alterations: [],
           thicknessHistory: [
@@ -233,7 +233,7 @@ export function seedSampleData() {
             }
           ],
           repairs: [
-            { id: 'rep-102-1', startDate: '2025-08-10', finishDate: '2025-08-12', method: 'Patch Plate', personIncharge: 'K. Lee', welderName: 'J. Wong', welderId: 'WLD-0512', originalCode: 'ASME Section VIII Div.1', repairCode: 'ASME PCC-2', shellHeadMaterial: 'SA-516 Gr.70', replacementMaterial: 'SS316L 6mm Plate', ndt: 'Radiography + DPI', designPressure: '12.5', designTemp: '150', hydrostatic: 'Yes', inspectionName: 'M. Johnson', scope: 'Installation of 6mm SS316L patch plate over thinned area on Shell — 180°. Butt weld prepared per WPS-PV-018. RT and DPI performed — no defects found. Hydrotest passed.' }
+            { id: 'rep-102-1', startDate: '2025-08-10', finishDate: '2025-08-12', method: 'Patch Plate', personIncharge: 'K. Lee', welderName: 'J. Wong', welderId: 'WLD-0512', originalCode: 'ASME Section VIII Div.1', repairCode: 'ASME PCC-2', shellHeadMaterial: 'SA-516 Gr.70', replacementMaterial: 'SS316L 6mm Plate', ndt: 'Radiography + DPI', designPressure: '12.5', designTemp: '150', hydrostatic: 'Yes', hydrostaticPressure: '16', inspectionName: 'M. Johnson', scope: 'Installation of 6mm SS316L patch plate over thinned area on Shell — 180°. Butt weld prepared per WPS-PV-018. RT and DPI performed — no defects found. Hydrotest passed.' }
           ],
           alterations: [],
           thicknessHistory: [

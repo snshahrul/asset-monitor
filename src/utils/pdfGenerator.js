@@ -513,7 +513,7 @@ export function generateRepairPDF(asset, repair, companyName = 'Asset Integrity 
       <tr><td>Replacement Material</td><td>${repair.replacementMaterial || 'N/A'}</td></tr>
       <tr><td>NDT Method</td><td>${repair.ndt || 'N/A'}</td></tr>
       <tr><td>Design Pressure / Temp</td><td>${repair.designPressure || '—'} bar / ${repair.designTemp || '—'}&deg;C</td></tr>
-      <tr><td>Hydrostatic Test</td><td>${repair.hydrostatic || 'N/A'}</td></tr>
+      <tr><td>Hydrostatic Test</td><td>${repair.hydrostatic || 'N/A'} ${repair.hydrostaticPressure ? '(' + repair.hydrostaticPressure + ' bar)' : ''}</td></tr>
       <tr><td>Inspection Name</td><td>${repair.inspectionName || 'N/A'}</td></tr>
       <tr><td>Scope of Work</td><td>${repair.scope || 'N/A'}</td></tr>
     </table>

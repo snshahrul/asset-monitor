@@ -8,6 +8,11 @@ import { useAlertStore } from '../../store/useAlertStore';
 const ORIGINAL_CODES = ['ASME Section VIII Div.1', 'BS1113', 'BS2790', 'TRD', 'ASME B31.3', 'ASME Section I', 'Other'];
 const REPAIR_CODES = ['ASME PCC-2', 'NBIC', 'ASME Section VIII Div.1', 'API 510', 'API 570', 'Other'];
 const NDT_METHODS = ['MPI', 'DPI', 'Radiography', 'UT - Thickness', 'UT - Shear Wave', 'PWHT', 'Hardness', 'PMI', 'Other'];
+const MATERIALS = [
+  'SA-516 Gr.70', 'SA-283 Gr.C', 'SA-36', 'EN10025 S275JR',
+  'SA-106 Gr.B', 'SA-240 Gr.304', 'SA-240 Gr.316', 'SA-312 TP304',
+  'BS3059 Part2 S2 360', 'BS3059 Part2 S2 620', 'ERW 620'
+];
 
 export default function RepairForm({ isOpen, onClose }) {
   const selectedId = useAssetStore(s => s.selectedAssetId);
@@ -18,7 +23,7 @@ export default function RepairForm({ isOpen, onClose }) {
 
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [finishDate, setFinishDate] = useState('');
-  const [method, setMethod] = useState('Weld Overlay');
+  const [method, setMethod] = useState('');
   const [personIncharge, setPersonIncharge] = useState('');
   const [welderName, setWelderName] = useState('');
   const [welderId, setWelderId] = useState('');
@@ -30,7 +35,8 @@ export default function RepairForm({ isOpen, onClose }) {
   const [designPressure, setDesignPressure] = useState('');
   const [designTemp, setDesignTemp] = useState('');
   const [hydrostatic, setHydrostatic] = useState('Yes');
-  const [inspectionName, setInspectionName] = useState('');
+  const [hydrostaticPressure, setHydrostaticPressure] = useState('');
+  const [inspectorName, setInspectorName] = useState('');
   const [scope, setScope] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -42,7 +48,7 @@ export default function RepairForm({ isOpen, onClose }) {
       id: 'rep-' + Date.now(),
       startDate, finishDate, method, personIncharge, welderName, welderId,
       originalCode, repairCode, shellHeadMaterial, replacementMaterial,
-      ndt, designPressure, designTemp, hydrostatic, inspectionName, scope
+      ndt, designPressure, designTemp, hydrostatic, hydrostaticPressure, inspectionName: inspectorName, scope
     });
     setSaving(true); setTimeout(() => { setSaving(false); onClose(); }, 300);
   };
@@ -78,7 +84,7 @@ export default function RepairForm({ isOpen, onClose }) {
         <div className="grid grid-cols-2 gap-2">
           <div><label className="label mb-1 block">Method of Repair</label>
             <select value={method} onChange={e => setMethod(e.target.value)} className="select-field">
-              <option>Weld Overlay</option><option>Patch Plate</option><option>Tube Replacement</option>
+              <option value="">— Select —</option><option>Weld Overlay</option><option>Patch Plate</option><option>Tube Replacement</option>
               <option>Grinding / Blending</option><option>Sleeve Reinforcement</option><option>Full Replacement</option><option>Other</option>
             </select></div>
           <div><label className="label mb-1 block">Person Incharge</label><input type="text" value={personIncharge} onChange={e => setPersonIncharge(e.target.value)} placeholder="Name" className="input-field" /></div>
@@ -92,8 +98,16 @@ export default function RepairForm({ isOpen, onClose }) {
 
         {/* Row 6: Materials */}
         <div className="grid grid-cols-2 gap-2">
-          <div><label className="label mb-1 block">Shell &amp; Head Material</label><input type="text" value={shellHeadMaterial} onChange={e => setShellHeadMaterial(e.target.value)} placeholder="e.g. SA-516 Gr.70" className="input-field" /></div>
-          <div><label className="label mb-1 block">Replacement Material</label><input type="text" value={replacementMaterial} onChange={e => setReplacementMaterial(e.target.value)} placeholder="e.g. SA-240 316L" className="input-field" /></div>
+          <div><label className="label mb-1 block">Shell/Head/Tube/Other Material</label>
+            <select value={shellHeadMaterial} onChange={e => setShellHeadMaterial(e.target.value)} className="select-field">
+              <option value="">— Select —</option>
+              {MATERIALS.map(m => <option key={m}>{m}</option>)}
+            </select></div>
+          <div><label className="label mb-1 block">Replacement Material</label>
+            <select value={replacementMaterial} onChange={e => setReplacementMaterial(e.target.value)} className="select-field">
+              <option value="">— Select —</option>
+              {MATERIALS.map(m => <option key={m}>{m}</option>)}
+            </select></div>
         </div>
 
         {/* Row 7: Design + NDT */}
@@ -106,13 +120,14 @@ export default function RepairForm({ isOpen, onClose }) {
             </select></div>
         </div>
 
-        {/* Row 8: Hydrostatic + Inspection */}
-        <div className="grid grid-cols-2 gap-2">
+        {/* Row 8: Hydrostatic + Inspector */}
+        <div className="grid grid-cols-3 gap-2">
           <div><label className="label mb-1 block">Hydrostatic Test</label>
             <select value={hydrostatic} onChange={e => setHydrostatic(e.target.value)} className="select-field">
               <option>Yes</option><option>No</option>
             </select></div>
-          <div><label className="label mb-1 block">Inspection Name</label><input type="text" value={inspectionName} onChange={e => setInspectionName(e.target.value)} className="input-field" /></div>
+          <div><label className="label mb-1 block">Hydrostatic Pressure (bar)</label><input type="number" step="0.1" value={hydrostaticPressure} onChange={e => setHydrostaticPressure(e.target.value)} className="input-field" /></div>
+          <div><label className="label mb-1 block">Inspector Name</label><input type="text" value={inspectorName} onChange={e => setInspectorName(e.target.value)} className="input-field" /></div>
         </div>
 
         {/* Row 9: Scope */}
