@@ -347,8 +347,8 @@ function buildEquipmentGrid(asset, color, extraItems = [], prependItems = []) {
     { label: 'Equipment ID', value: asset.name },
     ...prependItems,
     { label: 'Type / Location', value: `${asset.type} | ${asset.location || 'N/A'}` },
-    { label: 'Design Code', value: asset.designCode || 'N/A' },
-    { label: 'Design Data', value: `Nominal: ${asset.nominal || 'N/A'}mm | T-Min: ${asset.minRequired || 'N/A'}mm` },
+    { label: 'Manufacturer Name', value: asset.manufacturer || 'N/A' },
+    { label: 'Serial No.', value: asset.serial || 'N/A' },
     ...extraItems
   ];
   let rows = '';
@@ -522,7 +522,7 @@ export function generateRepairPDF(asset, repair, companyName = 'Asset Integrity 
       <tr><td>NDT Method</td><td>${repair.ndt || 'N/A'}</td></tr>
       <tr><td>Design Pressure / Temp</td><td>${repair.designPressure || '—'} bar / ${repair.designTemp || '—'}&deg;C</td></tr>
       <tr><td>Hydrostatic Test</td><td>${repair.hydrostatic || 'N/A'} ${repair.hydrostaticPressure ? '(' + repair.hydrostaticPressure + ' bar)' : ''}</td></tr>
-      <tr><td>Inspection Name</td><td>${repair.inspectionName || 'N/A'}</td></tr>
+      <tr><td>Inspector Name</td><td>${repair.inspectionName || 'N/A'}</td></tr>
       <tr><td>Scope of Work</td><td>${repair.scope || 'N/A'}</td></tr>
     </table>
 
