@@ -482,7 +482,7 @@ export function generateInspectionPDF(asset, inspection, companyName = 'Asset In
 }
 
 export function generateRepairPDF(asset, repair, companyName = 'Asset Integrity Management') {
-  const reportNumber = `RPR-${asset.name}-${repair.date}-${repair.id?.substr(-4) || '0001'}`;
+  const reportNumber = `RPR-${asset.name}-${repair.startDate || repair.date}-${repair.id?.substr(-4) || '0001'}`;
   const color = '#e65100';
   const initials = companyName.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
   const css = sharedStyles.replace(/__COLOR__/g, color);
@@ -498,25 +498,29 @@ export function generateRepairPDF(asset, repair, companyName = 'Asset Integrity 
   <div class="page">
     ${buildHeader(companyName, 'Repair Record', reportNumber, color, initials)}
     ${buildEquipmentGrid(asset, color, [
-      { label: 'Repair Date', value: repair.date },
-      { label: 'Repair Type', value: repair.type || 'N/A' },
-      { label: 'Technician', value: repair.technician || 'N/A' },
-      { label: 'WPS #', value: repair.wps || 'N/A' }
+      { label: 'Construction Code', value: repair.originalCode || 'N/A' },
+      { label: 'Repair Code', value: repair.repairCode || 'N/A' },
+      { label: 'Start Date', value: repair.startDate || repair.date || 'N/A' },
+      { label: 'Finish Date', value: repair.finishDate || 'N/A' }
     ])}
 
     <div class="section-title"><span class="sec-icon">&#9654;</span> Repair Details</div>
     <table class="detail-table">
-      <tr><td>Location on Equipment</td><td>${repair.location || 'N/A'}</td></tr>
-      <tr><td>Method</td><td>${repair.method || 'N/A'}</td></tr>
-      <tr><td>NDT After Repair</td><td>${repair.ndt || 'None'} &mdash; ${repair.ndtResult || 'N/A'}</td></tr>
-      <tr><td>Thickness After Repair</td><td>${repair.thicknessAfter ? repair.thicknessAfter + ' mm' : 'N/A'}</td></tr>
+      <tr><td>Method of Repair</td><td>${repair.method || repair.type || 'N/A'}</td></tr>
+      <tr><td>Person Incharge</td><td>${repair.personIncharge || repair.technician || 'N/A'}</td></tr>
+      <tr><td>Welder Name / ID</td><td>${repair.welderName || 'N/A'} / ${repair.welderId || 'N/A'}</td></tr>
+      <tr><td>Shell &amp; Head Material</td><td>${repair.shellHeadMaterial || 'N/A'}</td></tr>
+      <tr><td>Replacement Material</td><td>${repair.replacementMaterial || 'N/A'}</td></tr>
+      <tr><td>NDT Method</td><td>${repair.ndt || 'N/A'}</td></tr>
+      <tr><td>Design Pressure / Temp</td><td>${repair.designPressure || '—'} bar / ${repair.designTemp || '—'}&deg;C</td></tr>
+      <tr><td>Hydrostatic Test</td><td>${repair.hydrostatic || 'N/A'}</td></tr>
+      <tr><td>Inspection Name</td><td>${repair.inspectionName || 'N/A'}</td></tr>
       <tr><td>Scope of Work</td><td>${repair.scope || 'N/A'}</td></tr>
-      <tr><td>Remarks</td><td>${repair.remarks || 'None'}</td></tr>
     </table>
 
     ${buildSignatureRow([
-      { name: repair.technician, label: 'Technician' },
-      { name: repair.signoff, label: 'Inspector Sign-off' },
+      { name: repair.personIncharge || repair.technician, label: 'Person Incharge' },
+      { name: repair.inspectionName, label: 'Inspector' },
       { label: 'Date' }
     ])}
 

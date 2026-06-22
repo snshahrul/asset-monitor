@@ -167,22 +167,29 @@ export default function EquipmentDetail() {
           <p className="text-gray-500 text-xs py-8 text-center">No repair records yet</p>
         ) : (
           <div className="space-y-2">
-            {folder.repairs.sort((a, b) => new Date(b.date) - new Date(a.date)).map(r => (
+            {folder.repairs.sort((a, b) => new Date(b.startDate || b.date) - new Date(a.startDate || a.date)).map(r => (
               <div key={r.id} className="card px-4 py-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold text-gray-200">{r.date}</span>
-                      <span className="text-2xs text-gray-500">{r.type}</span>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-semibold text-gray-200">{r.startDate || r.date}</span>
+                      {r.finishDate && <span className="text-2xs text-gray-500">→ {r.finishDate}</span>}
+                      <span className="text-2xs text-gray-500">{r.method || r.type}</span>
+                      <span className="text-2xs text-primary-900 font-semibold">{r.repairCode || ''}</span>
                     </div>
-                    <div className="text-2xs text-gray-500 mt-0.5">Technician: {r.technician || 'N/A'} | WPS: {r.wps || 'N/A'}</div>
+                    <div className="text-2xs text-gray-500 mt-0.5">Incharge: {r.personIncharge || r.technician || 'N/A'} | Welder: {r.welderName || 'N/A'} ({r.welderId || '—'})</div>
                   </div>
                 </div>
                 <div className="text-2xs text-gray-500 mt-2 space-y-0.5">
-                  <div><span className="text-gray-400">Location:</span> {r.location || 'N/A'} | <span className="text-gray-400">Method:</span> {r.method || 'N/A'}</div>
-                  <div><span className="text-gray-400">Scope:</span> {r.scope || 'N/A'}</div>
-                  <div><span className="text-gray-400">NDT After:</span> {r.ndt || 'None'} — {r.ndtResult || 'N/A'}{r.thicknessAfter ? ` | Thickness: ${r.thicknessAfter}mm` : ''}</div>
-                  <div><span className="text-gray-400">Sign-off:</span> {r.signoff || 'N/A'}</div>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-0.5">
+                    <span><span className="text-gray-400">Construction Code:</span> {r.originalCode || 'N/A'}</span>
+                    <span><span className="text-gray-400">Shell Material:</span> {r.shellHeadMaterial || 'N/A'}</span>
+                    <span><span className="text-gray-400">Replacement Mat.:</span> {r.replacementMaterial || 'N/A'}</span>
+                    <span><span className="text-gray-400">NDT:</span> {r.ndt || 'N/A'}</span>
+                    <span><span className="text-gray-400">Design P/T:</span> {r.designPressure || '—'} bar / {r.designTemp || '—'}°C</span>
+                    <span><span className="text-gray-400">Hydro:</span> {r.hydrostatic || 'N/A'} | <span className="text-gray-400">Inspector:</span> {r.inspectionName || 'N/A'}</span>
+                  </div>
+                  {r.scope && <div className="mt-1"><span className="text-gray-400">Scope:</span> {r.scope}</div>}
                 </div>
                 <div className="flex gap-2 mt-2 pt-2 border-t border-dark-600">
                   <button onClick={() => handleRepairPDF(r)} className="text-primary-900 hover:text-primary-700 text-2xs flex items-center gap-1 font-semibold transition-colors">
