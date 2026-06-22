@@ -1,30 +1,56 @@
 ﻿export default function RBIMatrix({ assets }) {
   const getLikelihood = (asset) => {
     const remainingAboveTmin = asset.currentThick - asset.minRequired;
-    if (remainingAboveTmin < 0) return 5;
-    if (remainingAboveTmin < 1) return 4;
-    if (remainingAboveTmin < 2) return 3;
+
+    let wallScore = 1;
+    if (remainingAboveTmin < 0) wallScore = 5;
+    else if (remainingAboveTmin < 1) wallScore = 4;
+    else if (remainingAboveTmin < 2) wallScore = 3;
+    else if (remainingAboveTmin < 5) wallScore = 2;
+
+    let crScore = 1;
     const cr = asset.corrosionRate || 0.1;
-    if (cr > 0.3) return 5;
-    if (cr > 0.2) return 4;
-    if (cr > 0.1) return 3;
-    if (cr > 0.05) return 2;
-    return 1;
+    if (cr > 0.3) crScore = 5;
+    else if (cr > 0.2) crScore = 4;
+    else if (cr > 0.1) crScore = 3;
+    else if (cr > 0.05) crScore = 2;
+
+    let statusScore = 1;
+    if (asset.status === 'critical') statusScore = 5;
+    else if (asset.status === 'warning') statusScore = 3;
+
+    return Math.round(wallScore * 0.3 + crScore * 0.3 + statusScore * 0.4);
   };
 
   const getConsequence = (asset) => {
+    const fluid = (asset.fluidService || '').toLowerCase();
+
+    let fluidScore = 1;
+    if (['lethal', 'h2s'].some(f => fluid.includes(f))) fluidScore = 5;
+    else if (['flammable', 'hydrocarbon', 'process gas', 'hydrogen', 'lpg', 'propane'].some(f => fluid.includes(f))) fluidScore = 4;
+    else if (['steam', 'chemical', 'acid', 'caustic', 'ammonia', 'chlorine'].some(f => fluid.includes(f))) fluidScore = 3;
+    else if (['oil', 'fuel', 'solvent'].some(f => fluid.includes(f))) fluidScore = 2;
+
+    const press = parseFloat(asset.operatingPress || asset.sensors?.pressure || 0);
+    let pressureScore = 1;
+    if (press > 30) pressureScore = 5;
+    else if (press > 15) pressureScore = 4;
+    else if (press > 7) pressureScore = 3;
+    else if (press > 3) pressureScore = 2;
+
+    const temp = parseFloat(asset.operatingTemp || asset.sensors?.temperature || 0);
+    let tempScore = 1;
+    if (temp > 350) tempScore = 5;
+    else if (temp > 250) tempScore = 4;
+    else if (temp > 100) tempScore = 3;
+    else if (temp > 50) tempScore = 2;
+
+    let wallScore = 1;
     const remainingAboveTmin = asset.currentThick - asset.minRequired;
-    if (remainingAboveTmin < 0) return 5;
-    if (remainingAboveTmin < 1) return 5;
-    if (remainingAboveTmin < 2) return 4;
-    if (remainingAboveTmin < 5) return 3;
-    const rem = asset.corrosionRate > 0 ? remainingAboveTmin / asset.corrosionRate : 100;
-    if (rem < 2) return 5;
-    if (rem < 5) return 4;
-    if (rem < 10) return 3;
-    if (rem < 20) return 2;
-    if (asset.fluidService === 'Lethal') return Math.max(4, 2);
-    return 1;
+    if (remainingAboveTmin < 0) wallScore = 5;
+    else if (remainingAboveTmin < 2) wallScore = 3;
+
+    return Math.round(fluidScore * 0.35 + pressureScore * 0.25 + tempScore * 0.25 + wallScore * 0.15);
   };
 
   const getRiskLevel = (likelihood, consequence) => {
