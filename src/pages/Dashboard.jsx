@@ -68,7 +68,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-sm font-mono font-semibold text-gray-200 truncate">{a.name}</span>
                       <div className="flex items-center gap-1 shrink-0">
-                        <button onClick={e => { e.stopPropagation(); navigate(`/equipment/edit/${a.id}`); }} className="opacity-0 group-hover:opacity-100 btn-icon text-gray-500 hover:text-primary-900 transition-all" title="Edit equipment">
+                        <button onClick={e => { e.stopPropagation(); navigate(`/equipment/edit/${a.id}`); }} className="btn-icon text-gray-500 hover:text-primary-900" title="Edit equipment">
                           <Pencil size={13} />
                         </button>
                         <span className={'text-2xs font-semibold px-1.5 py-0.5 rounded-full ' + (a.status === 'critical' ? 'bg-red-900/60 text-red-300' : a.status === 'warning' ? 'bg-amber-900/60 text-amber-300' : 'bg-emerald-900/60 text-emerald-300')}>{a.status}</span>
