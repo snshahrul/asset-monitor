@@ -34,8 +34,8 @@
     const press = parseFloat(asset.operatingPress || asset.sensors?.pressure || 0);
     let pressureScore = 1;
     if (press > 25) pressureScore = 5;
-    else if (press > 12) pressureScore = 4;
-    else if (press > 6) pressureScore = 3;
+    else if (press > 13) pressureScore = 4;
+    else if (press > 7) pressureScore = 3;
     else if (press > 2) pressureScore = 2;
 
     const temp = parseFloat(asset.operatingTemp || asset.sensors?.temperature || 0);
