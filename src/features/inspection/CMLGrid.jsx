@@ -1,5 +1,5 @@
 ﻿import { useState, useCallback, useEffect } from 'react';
-import { Plus, LayoutGrid } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import CMLRow from './CMLRow';
 import Button from '../../components/ui/Button';
 
@@ -134,14 +134,10 @@ export default function CMLGrid({ asset, initialRows, onDataChange }) {
       section.rows.map(r => {
         cmlNum++;
         return {
-          cml: cmlNum,
-          location: r.location,
-          orientation: r.orientation,
-          nominal: asset?.nominal || 25,
-          previous: +(asset?.currentThick || 24).toFixed(2),
+          cml: cmlNum, location: r.location, orientation: r.orientation,
+          nominal: asset?.nominal || 25, previous: +(asset?.currentThick || 24).toFixed(2),
           measured: +((asset?.currentThick || 24) - 0.2 - Math.random() * 0.5).toFixed(2),
-          tmin: asset?.minRequired || 18,
-          section: section.name
+          tmin: asset?.minRequired || 18, section: section.name
         };
       })
     );
@@ -178,33 +174,34 @@ export default function CMLGrid({ asset, initialRows, onDataChange }) {
   rows.forEach(row => { const sec = row.section || 'General'; if (!sections[sec]) sections[sec] = []; sections[sec].push(row); });
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2 bg-dark-700/50 rounded-lg p-3">
-        <LayoutGrid size={16} className="text-primary-900" />
-        <span className="text-white font-bold text-sm">{template.label} — {rows.length} CML points</span>
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 bg-dark-700/30 rounded-lg px-3 py-2">
+        <span className="text-xs font-semibold text-gray-200">{template.label} — {rows.length} CML points</span>
       </div>
 
       {Object.entries(sections).map(([sectionName, sectionRows]) => (
         <div key={sectionName} className="border border-dark-600 rounded-lg overflow-hidden">
-          <div className="bg-dark-700 px-4 py-2 font-bold text-sm text-primary-900">📏 {sectionName} ({sectionRows.length} points)</div>
-          <table className="w-full text-xs">
-            <thead className="bg-dark-700/50 text-gray-400">
-              <tr><th className="p-1.5 text-center w-10">#</th><th className="p-1.5 text-left">Location</th><th className="p-1.5 w-16">Orient</th><th className="p-1.5 w-16">Nominal</th><th className="p-1.5 w-16">Previous</th><th className="p-1.5 w-16 text-primary-900">Measured</th><th className="p-1.5 w-16 text-red-400">T-Min</th><th className="p-1.5 w-16">Remain</th><th className="p-1.5 w-20">Status</th></tr>
-            </thead>
-            <tbody>
-              {sectionRows.map(r => { const gi = rows.findIndex(row => row.cml === r.cml); return <CMLRow key={r.cml} index={gi} data={r} onChange={(f, v) => updateRow(gi, f, v)} />; })}
-            </tbody>
-          </table>
+          <div className="bg-dark-700/50 px-3 py-1.5 text-xs font-semibold text-primary-900">{sectionName} ({sectionRows.length})</div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-2xs">
+              <thead className="bg-dark-700/30 text-gray-500">
+                <tr><th className="p-1 text-center w-8 font-semibold">#</th><th className="p-1 text-left font-semibold">Location</th><th className="p-1 w-14 font-semibold">Orient</th><th className="p-1 w-14 text-right font-semibold">Nom.</th><th className="p-1 w-14 text-right font-semibold">Prev.</th><th className="p-1 w-14 text-right font-semibold text-primary-900">Meas.</th><th className="p-1 w-14 text-right font-semibold text-red-400">T-Min</th><th className="p-1 w-14 text-right font-semibold">Rem.</th><th className="p-1 w-16 text-center font-semibold">Status</th></tr>
+              </thead>
+              <tbody>
+                {sectionRows.map(r => { const gi = rows.findIndex(row => row.cml === r.cml); return <CMLRow key={r.cml} index={gi} data={r} onChange={(f, v) => updateRow(gi, f, v)} />; })}
+              </tbody>
+            </table>
+          </div>
         </div>
       ))}
 
-      <div className="flex gap-2"><Button variant="outline" size="xs" icon={Plus} onClick={addRow}>Add CML Point</Button></div>
+      <Button variant="outline" size="xs" icon={Plus} onClick={addRow}>Add Point</Button>
 
-      <div className="grid grid-cols-4 gap-3 bg-dark-700/50 rounded-lg p-4 text-center">
-        <div><div className="text-xs text-gray-400">Total Points</div><div className="text-lg font-bold text-white">{rows.length}</div></div>
-        <div><div className="text-xs text-gray-400">Avg Thickness</div><div className="text-lg font-bold text-primary-900">{avgThick} mm</div></div>
-        <div><div className="text-xs text-gray-400">Min Thickness</div><div className="text-lg font-bold text-red-400">{minThick} mm</div></div>
-        <div><div className="text-xs text-gray-400">Min Above T-Min</div><div className="text-lg font-bold" style={{color: parseFloat(minRemaining) < 0 ? '#ef4444' : '#22c55e'}}>{minRemaining} mm</div></div>
+      <div className="grid grid-cols-4 gap-2 bg-dark-700/30 rounded-lg p-3 text-center">
+        <div><div className="text-2xs text-gray-500">Total</div><div className="text-sm font-bold text-white">{rows.length}</div></div>
+        <div><div className="text-2xs text-gray-500">Avg</div><div className="text-sm font-bold text-primary-900">{avgThick} mm</div></div>
+        <div><div className="text-2xs text-gray-500">Min</div><div className="text-sm font-bold text-red-400">{minThick} mm</div></div>
+        <div><div className="text-2xs text-gray-500">Above T-Min</div><div className="text-sm font-bold" style={{color: parseFloat(minRemaining) < 0 ? '#ef4444' : '#22c55e'}}>{minRemaining} mm</div></div>
       </div>
     </div>
   );

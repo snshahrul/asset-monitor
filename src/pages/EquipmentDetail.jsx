@@ -14,7 +14,7 @@ export default function EquipmentDetail() {
   const folder = useAssetStore(s => s.equipmentFolders[assetId] || { inspections: [], repairs: [], alterations: [], thicknessHistory: [], documents: [] });
   const [activeTab, setActiveTab] = useState('inspections');
 
-  if (!asset) return <div className="text-center py-20 text-gray-400">Equipment not found</div>;
+  if (!asset) return <div className="text-center py-16 text-gray-500">Equipment not found</div>;
 
   const remaining = asset.corrosionRate > 0 ? ((asset.currentThick - asset.minRequired) / asset.corrosionRate).toFixed(1) : 'N/A';
   const ratio = Math.min(100, Math.max(0, (asset.currentThick / asset.nominal) * 100));
@@ -35,100 +35,122 @@ export default function EquipmentDetail() {
     downloadPDF(html, reportNumber);
   };
 
+  const tabs = [
+    { key: 'inspections', label: 'Inspections', count: folder.inspections.length },
+    { key: 'repairs', label: 'Repairs', count: folder.repairs.length },
+    { key: 'alterations', label: 'Alterations', count: folder.alterations.length },
+    { key: 'trend', label: 'Trend', count: null },
+    { key: 'documents', label: 'Documents', count: (folder.documents || []).length },
+  ];
+
   return (
-    <div className="space-y-4 text-left">
+    <div className="space-y-3">
       {/* Header */}
-      <div className="bg-gradient-to-r from-dark-800 to-dark-700 border border-dark-600 text-white p-6 rounded-xl">
-        <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-bold">{asset.name}</h2>
-          <Badge variant={statusVariant}>{asset.status.toUpperCase()}</Badge>
+      <div className="card overflow-hidden">
+        <div className="bg-gradient-to-r from-dark-800 to-dark-700 px-5 py-3">
+          <div className="flex items-center gap-3">
+            <h2 className="text-base font-bold text-white">{asset.name}</h2>
+            <Badge variant={statusVariant} size="xs">{asset.status.toUpperCase()}</Badge>
+          </div>
+          <p className="text-2xs text-gray-500 mt-1">{asset.type} | {asset.location || 'No location'} | Code: {asset.designCode || 'N/A'}</p>
         </div>
-        <p className="text-sm text-gray-400 mt-1">{asset.type} | {asset.location || 'No location'} | Code: {asset.designCode || 'N/A'}</p>
-      </div>
-
-      {/* Gauges */}
-      <div className="grid grid-cols-4 gap-3">
-        <div className="card p-4 text-center"><div className="text-xl font-bold text-primary-900">{asset.sensors.temperature.toFixed(1)}°C</div><div className="text-xs text-gray-400">Temperature</div></div>
-        <div className="card p-4 text-center"><div className="text-xl font-bold text-primary-900">{asset.sensors.pressure.toFixed(2)} bar</div><div className="text-xs text-gray-400">Pressure</div></div>
-        <div className="card p-4 text-center"><div className="text-xl font-bold text-primary-900">{asset.currentThick.toFixed(2)} mm</div><div className="text-xs text-gray-400">Avg Thickness</div></div>
-        <div className="card p-4 text-center"><div className={'text-xl font-bold ' + (parseFloat(remaining) < 5 ? 'text-red-400' : 'text-primary-900')}>{remaining} yr</div><div className="text-xs text-gray-400">Remaining Life</div></div>
-      </div>
-
-      {/* Thickness Bar */}
-      <div className="card p-4">
-        <div className="flex justify-between text-sm mb-1"><span className="text-gray-300">Wall Remaining: {ratio.toFixed(0)}%</span><span className="text-gray-400">Nominal: {asset.nominal}mm | T-Min: {asset.minRequired}mm | Current: {asset.currentThick.toFixed(2)}mm</span></div>
-        <div className="h-4 bg-dark-600 rounded-full overflow-hidden"><div className="h-full rounded-full transition-all" style={{ width: ratio + '%', background: ratio < 30 ? '#ef4444' : ratio < 60 ? '#f59e0b' : '#10b981' }} /></div>
+        {/* Gauges */}
+        <div className="grid grid-cols-4 divide-x divide-dark-600">
+          <div className="p-3 text-center">
+            <div className="text-xs font-bold text-primary-900">{asset.sensors.temperature.toFixed(1)}°C</div>
+            <div className="text-2xs text-gray-500">Temperature</div>
+          </div>
+          <div className="p-3 text-center">
+            <div className="text-xs font-bold text-primary-900">{asset.sensors.pressure.toFixed(2)} bar</div>
+            <div className="text-2xs text-gray-500">Pressure</div>
+          </div>
+          <div className="p-3 text-center">
+            <div className="text-xs font-bold text-primary-900">{asset.currentThick.toFixed(2)} mm</div>
+            <div className="text-2xs text-gray-500">Avg Thickness</div>
+          </div>
+          <div className="p-3 text-center">
+            <div className={'text-xs font-bold ' + (parseFloat(remaining) < 5 ? 'text-red-400' : 'text-primary-900')}>{remaining} yr</div>
+            <div className="text-2xs text-gray-500">Remaining Life</div>
+          </div>
+        </div>
+        {/* Thickness Bar */}
+        <div className="px-5 pb-3">
+          <div className="flex justify-between text-2xs mb-1">
+            <span className="text-gray-500">Wall Remaining: {ratio.toFixed(0)}%</span>
+            <span className="text-gray-600">Nom: {asset.nominal}mm | T-Min: {asset.minRequired}mm | Curr: {asset.currentThick.toFixed(2)}mm</span>
+          </div>
+          <div className="h-1.5 bg-dark-600 rounded-full overflow-hidden">
+            <div className="h-full rounded-full transition-all" style={{ width: ratio + '%', background: ratio < 30 ? '#ef4444' : ratio < 60 ? '#f59e0b' : '#10b981' }} />
+          </div>
+        </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-dark-600 flex-wrap">
-        <button onClick={() => setActiveTab('inspections')} className={'px-5 py-3 font-semibold text-sm ' + (activeTab === 'inspections' ? 'text-primary-900 border-b-2 border-primary-800' : 'text-gray-500 hover:text-gray-300')}>📝 Inspections ({folder.inspections.length})</button>
-        <button onClick={() => setActiveTab('repairs')} className={'px-5 py-3 font-semibold text-sm ' + (activeTab === 'repairs' ? 'text-primary-900 border-b-2 border-primary-800' : 'text-gray-500 hover:text-gray-300')}>🔧 Repairs ({folder.repairs.length})</button>
-        <button onClick={() => setActiveTab('alterations')} className={'px-5 py-3 font-semibold text-sm ' + (activeTab === 'alterations' ? 'text-primary-900 border-b-2 border-primary-800' : 'text-gray-500 hover:text-gray-300')}>📐 Alterations ({folder.alterations.length})</button>
-        <button onClick={() => setActiveTab('trend')} className={'px-5 py-3 font-semibold text-sm ' + (activeTab === 'trend' ? 'text-primary-900 border-b-2 border-primary-800' : 'text-gray-500 hover:text-gray-300')}>📈 Trend</button>
-        <button onClick={() => setActiveTab('documents')} className={'px-5 py-3 font-semibold text-sm ' + (activeTab === 'documents' ? 'text-primary-900 border-b-2 border-primary-800' : 'text-gray-500 hover:text-gray-300')}>📄 Documents ({(folder.documents || []).length})</button>
+      <div className="flex border-b border-dark-600 gap-0">
+        {tabs.map(t => (
+          <button key={t.key} onClick={() => setActiveTab(t.key)}
+            className={'px-4 py-2 text-xs font-semibold transition-colors relative ' + (activeTab === t.key ? 'text-primary-900' : 'text-gray-500 hover:text-gray-300')}>
+            {t.label}{t.count !== null ? ` (${t.count})` : ''}
+            {activeTab === t.key && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-800 rounded-full" />}
+          </button>
+        ))}
       </div>
 
       {/* ===== INSPECTIONS TAB ===== */}
       {activeTab === 'inspections' && (
         folder.inspections.length === 0 ? (
-          <p className="text-gray-500 py-10 text-center">No inspection records yet</p>
+          <p className="text-gray-500 text-xs py-8 text-center">No inspection records yet</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {folder.inspections.sort((a, b) => new Date(b.date) - new Date(a.date)).map(insp => (
-              <div key={insp.id} className="card p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <strong className="text-gray-200">📝 {insp.date} — {insp.type || 'Inspection'}</strong>
-                    <div className="text-xs text-gray-400 mt-1">Inspector: {insp.inspector || 'N/A'} | NDT: {insp.ndtMethod || 'N/A'} | Equipment: {insp.equipment || 'N/A'}</div>
+              <div key={insp.id} className="card px-4 py-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-gray-200">{insp.date}</span>
+                      <Badge variant={insp.condition === 'Critical' ? 'critical' : insp.condition === 'Poor' ? 'warning' : 'success'} size="xs">{insp.condition || 'N/A'}</Badge>
+                      <span className="text-2xs text-gray-500">{insp.type || 'Inspection'}</span>
+                    </div>
+                    <div className="text-2xs text-gray-500 mt-0.5">Inspector: {insp.inspector || 'N/A'} | NDT: {insp.ndtMethod || 'N/A'}</div>
                   </div>
-                  <Badge variant={insp.condition === 'Critical' ? 'critical' : insp.condition === 'Poor' ? 'warning' : 'success'}>{insp.condition || 'N/A'}</Badge>
                 </div>
 
-                {/* CML Grid Summary */}
                 {insp.gridData?.rows?.length > 0 && (
-                  <div className="bg-dark-700/50 rounded-lg p-3 mt-3">
-                    <strong className="text-xs text-gray-300">📏 CML Grid ({insp.gridData.rows.length} points):</strong>
-                    <span className="text-xs text-gray-400 ml-2">
-                      Min: <span className="text-red-400 font-bold">{Math.min(...insp.gridData.rows.map(r => r.measured)).toFixed(2)}mm</span> | 
-                      Avg: <span className="text-primary-900 font-bold">{(insp.gridData.rows.reduce((s, r) => s + r.measured, 0) / insp.gridData.rows.length).toFixed(2)}mm</span>
+                  <div className="bg-dark-700/30 rounded px-3 py-2 mt-2">
+                    <span className="text-2xs text-gray-400 font-semibold">CML Grid ({insp.gridData.rows.length} pts): </span>
+                    <span className="text-2xs text-gray-500">
+                      Min: <span className="text-red-400 font-semibold">{Math.min(...insp.gridData.rows.map(r => r.measured)).toFixed(2)}mm</span> |
+                      Avg: <span className="text-primary-900 font-semibold">{(insp.gridData.rows.reduce((s, r) => s + r.measured, 0) / insp.gridData.rows.length).toFixed(2)}mm</span>
                     </span>
                     {insp.gridData.rows.some(r => r.measured <= (asset.minRequired || 0)) && (
-                      <span className="ml-2 px-2 py-0.5 bg-red-900 text-red-300 text-xs rounded-full font-bold">⚠ BELOW T-MIN</span>
+                      <span className="ml-2 text-2xs bg-red-900/60 text-red-300 px-1.5 py-0.5 rounded-full font-semibold">BELOW T-MIN</span>
                     )}
                   </div>
                 )}
 
-                {/* NDT Details for non-UT inspections */}
-                {insp.ndtDetails && Object.keys(insp.ndtDetails).length > 0 && (
-                  <div className="bg-dark-700/50 rounded-lg p-3 mt-2">
-                    <strong className="text-xs text-gray-300">{insp.ndtMethod} Details:</strong>
-                    <div className="text-xs text-gray-400 mt-1">
-                      {Object.entries(insp.ndtDetails).map(([key, val]) => (
-                        <span key={key} className="mr-3">{key}: <span className="text-white">{val}</span></span>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                <div className="text-2xs text-gray-500 mt-2"><span className="text-gray-400">Findings:</span> {insp.findings || 'None'}</div>
+                <div className="text-2xs text-gray-500"><span className="text-gray-400">Recs:</span> {insp.recommendations || 'None'}</div>
 
-                <div className="text-xs text-gray-300 mt-2"><strong>Findings:</strong> {insp.findings || 'None'}</div>
-                <div className="text-xs text-gray-300"><strong>Recommendations:</strong> {insp.recommendations || 'None'}</div>
-                
-                {/* Calculated Values */}
-                <div className="grid grid-cols-4 gap-2 mt-3 text-center text-xs">
-                  <div className="bg-dark-700 rounded p-2"><div className="text-gray-400">Avg</div><div className="text-white font-bold">{insp.avgThickness?.toFixed(2) || '—'} mm</div></div>
-                  <div className="bg-dark-700 rounded p-2"><div className="text-gray-400">Min</div><div className="text-red-400 font-bold">{insp.minThickness?.toFixed(2) || '—'} mm</div></div>
-                  <div className="bg-dark-700 rounded p-2"><div className="text-gray-400">Rem. Life</div><div className="text-primary-900 font-bold">{insp.remainingLife || '—'}</div></div>
-                  <div className="bg-dark-700 rounded p-2"><div className="text-gray-400">Next Insp.</div><div className="text-white font-bold">{insp.nextInspectionDate || '—'}</div></div>
+                <div className="grid grid-cols-4 gap-2 mt-2">
+                  {[
+                    { label: 'Avg.', value: insp.avgThickness?.toFixed(2) || '—', unit: 'mm', cls: 'text-primary-900' },
+                    { label: 'Min', value: insp.minThickness?.toFixed(2) || '—', unit: 'mm', cls: 'text-red-400' },
+                    { label: 'Rem. Life', value: insp.remainingLife || '—', unit: '', cls: 'text-primary-900' },
+                    { label: 'Next Insp.', value: insp.nextInspectionDate || '—', unit: '', cls: 'text-gray-200' },
+                  ].map((f, i) => (
+                    <div key={i} className="bg-dark-700/30 rounded px-2 py-1 text-center">
+                      <div className="text-2xs text-gray-500">{f.label}</div>
+                      <div className={'text-xs font-bold ' + f.cls}>{f.value} {f.unit}</div>
+                    </div>
+                  ))}
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-3 mt-3 pt-2 border-t border-dark-600">
-                  <button onClick={() => handleInspectionPDF(insp)} className="text-primary-900 hover:text-primary-700 text-xs flex items-center gap-1 font-semibold">
-                    <FileText size={14} /> Download PDF Report
+                <div className="flex gap-2 mt-2 pt-2 border-t border-dark-600">
+                  <button onClick={() => handleInspectionPDF(insp)} className="text-primary-900 hover:text-primary-700 text-2xs flex items-center gap-1 font-semibold transition-colors">
+                    <FileText size={12} /> PDF Report
                   </button>
-                  <button onClick={() => { if (confirm('Delete this inspection?')) { const store = useAssetStore.getState(); store.deleteRecord(assetId, 'inspections', insp.id); window.location.reload(); } }} className="text-red-400 hover:text-red-300 text-xs">
-                    🗑️ Delete
+                  <button onClick={() => { if (confirm('Delete this inspection?')) { const store = useAssetStore.getState(); store.deleteRecord(assetId, 'inspections', insp.id); window.location.reload(); } }} className="text-red-500 hover:text-red-400 text-2xs ml-auto">
+                    Delete
                   </button>
                 </div>
               </div>
@@ -140,29 +162,32 @@ export default function EquipmentDetail() {
       {/* ===== REPAIRS TAB ===== */}
       {activeTab === 'repairs' && (
         folder.repairs.length === 0 ? (
-          <p className="text-gray-500 py-10 text-center">No repair records yet</p>
+          <p className="text-gray-500 text-xs py-8 text-center">No repair records yet</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {folder.repairs.sort((a, b) => new Date(b.date) - new Date(a.date)).map(r => (
-              <div key={r.id} className="card p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <strong className="text-gray-200">🔧 {r.date} — {r.type}</strong>
-                    <div className="text-xs text-gray-400 mt-1">Technician: {r.technician || 'N/A'} | Method: {r.method || 'N/A'} | WPS: {r.wps || 'N/A'}</div>
+              <div key={r.id} className="card px-4 py-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-gray-200">{r.date}</span>
+                      <span className="text-2xs text-gray-500">{r.type}</span>
+                    </div>
+                    <div className="text-2xs text-gray-500 mt-0.5">Technician: {r.technician || 'N/A'} | WPS: {r.wps || 'N/A'}</div>
                   </div>
                 </div>
-                <div className="text-xs text-gray-300 mt-2"><strong>Location:</strong> {r.location || 'N/A'}</div>
-                <div className="text-xs text-gray-300"><strong>Scope:</strong> {r.scope || 'N/A'}</div>
-                <div className="text-xs text-gray-300"><strong>NDT After:</strong> {r.ndt || 'None'} — {r.ndtResult || 'N/A'}</div>
-                {r.thicknessAfter && <div className="text-xs text-green-400"><strong>Thickness After:</strong> {r.thicknessAfter} mm</div>}
-                <div className="text-xs text-gray-300"><strong>Sign-off:</strong> {r.signoff || 'N/A'}</div>
-
-                <div className="flex gap-3 mt-3 pt-2 border-t border-dark-600">
-                  <button onClick={() => handleRepairPDF(r)} className="text-primary-900 hover:text-primary-700 text-xs flex items-center gap-1 font-semibold">
-                    <FileText size={14} /> Download PDF Report
+                <div className="text-2xs text-gray-500 mt-2 space-y-0.5">
+                  <div><span className="text-gray-400">Location:</span> {r.location || 'N/A'} | <span className="text-gray-400">Method:</span> {r.method || 'N/A'}</div>
+                  <div><span className="text-gray-400">Scope:</span> {r.scope || 'N/A'}</div>
+                  <div><span className="text-gray-400">NDT After:</span> {r.ndt || 'None'} — {r.ndtResult || 'N/A'}{r.thicknessAfter ? ` | Thickness: ${r.thicknessAfter}mm` : ''}</div>
+                  <div><span className="text-gray-400">Sign-off:</span> {r.signoff || 'N/A'}</div>
+                </div>
+                <div className="flex gap-2 mt-2 pt-2 border-t border-dark-600">
+                  <button onClick={() => handleRepairPDF(r)} className="text-primary-900 hover:text-primary-700 text-2xs flex items-center gap-1 font-semibold transition-colors">
+                    <FileText size={12} /> PDF Report
                   </button>
-                  <button onClick={() => { if (confirm('Delete this repair record?')) { const store = useAssetStore.getState(); store.deleteRecord(assetId, 'repairs', r.id); window.location.reload(); } }} className="text-red-400 hover:text-red-300 text-xs">
-                    🗑️ Delete
+                  <button onClick={() => { if (confirm('Delete this repair record?')) { const store = useAssetStore.getState(); store.deleteRecord(assetId, 'repairs', r.id); window.location.reload(); } }} className="text-red-500 hover:text-red-400 text-2xs ml-auto">
+                    Delete
                   </button>
                 </div>
               </div>
@@ -174,28 +199,32 @@ export default function EquipmentDetail() {
       {/* ===== ALTERATIONS TAB ===== */}
       {activeTab === 'alterations' && (
         folder.alterations.length === 0 ? (
-          <p className="text-gray-500 py-10 text-center">No alteration records yet</p>
+          <p className="text-gray-500 text-xs py-8 text-center">No alteration records yet</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             {folder.alterations.sort((a, b) => new Date(b.date) - new Date(a.date)).map(alt => (
-              <div key={alt.id} className="card p-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <strong className="text-gray-200">📐 {alt.date} — {alt.type}</strong>
-                    <div className="text-xs text-gray-400 mt-1">Engineer: {alt.engineer || 'N/A'} | Code: {alt.code || 'N/A'} | Drawing: {alt.drawing || 'N/A'}</div>
+              <div key={alt.id} className="card px-4 py-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-gray-200">{alt.date}</span>
+                      <span className="text-2xs text-gray-500">{alt.type}</span>
+                    </div>
+                    <div className="text-2xs text-gray-500 mt-0.5">Engineer: {alt.engineer || 'N/A'} | Code: {alt.code || 'N/A'}</div>
                   </div>
                 </div>
-                <div className="text-xs text-gray-300 mt-2"><strong>Description:</strong> {alt.description || 'N/A'}</div>
-                <div className="text-xs text-gray-300"><strong>Impact:</strong> {alt.impact || 'N/A'}</div>
-                <div className="text-xs text-gray-300"><strong>Hydrotest:</strong> {alt.hydro || 'N/A'} | <strong>NDT:</strong> {alt.ndt || 'N/A'} ({alt.ndtResult || 'N/A'})</div>
-                <div className="text-xs text-gray-300"><strong>AI Sign-off:</strong> {alt.ai || 'N/A'} | <strong>Regulatory:</strong> {alt.regulatory || 'N/A'}</div>
-
-                <div className="flex gap-3 mt-3 pt-2 border-t border-dark-600">
-                  <button onClick={() => handleAlterationPDF(alt)} className="text-primary-900 hover:text-primary-700 text-xs flex items-center gap-1 font-semibold">
-                    <FileText size={14} /> Download PDF Report
+                <div className="text-2xs text-gray-500 mt-2 space-y-0.5">
+                  <div><span className="text-gray-400">Drawing:</span> {alt.drawing || 'N/A'}</div>
+                  <div><span className="text-gray-400">Description:</span> {alt.description || 'N/A'}</div>
+                  <div><span className="text-gray-400">Impact:</span> {alt.impact || 'N/A'} | <span className="text-gray-400">Hydro:</span> {alt.hydro || 'N/A'}</div>
+                  <div><span className="text-gray-400">NDT:</span> {alt.ndt || 'N/A'} ({alt.ndtResult || 'N/A'}) | <span className="text-gray-400">AI:</span> {alt.ai || 'N/A'} | <span className="text-gray-400">Reg:</span> {alt.regulatory || 'N/A'}</div>
+                </div>
+                <div className="flex gap-2 mt-2 pt-2 border-t border-dark-600">
+                  <button onClick={() => handleAlterationPDF(alt)} className="text-primary-900 hover:text-primary-700 text-2xs flex items-center gap-1 font-semibold transition-colors">
+                    <FileText size={12} /> PDF Report
                   </button>
-                  <button onClick={() => { if (confirm('Delete this alteration record?')) { const store = useAssetStore.getState(); store.deleteRecord(assetId, 'alterations', alt.id); window.location.reload(); } }} className="text-red-400 hover:text-red-300 text-xs">
-                    🗑️ Delete
+                  <button onClick={() => { if (confirm('Delete this alteration record?')) { const store = useAssetStore.getState(); store.deleteRecord(assetId, 'alterations', alt.id); window.location.reload(); } }} className="text-red-500 hover:text-red-400 text-2xs ml-auto">
+                    Delete
                   </button>
                 </div>
               </div>
@@ -206,7 +235,9 @@ export default function EquipmentDetail() {
 
       {/* ===== TREND TAB ===== */}
       {activeTab === 'trend' && (
-        <ThicknessChart asset={asset} thicknessHistory={folder.thicknessHistory || []} />
+        <div className="card p-4">
+          <ThicknessChart asset={asset} thicknessHistory={folder.thicknessHistory || []} />
+        </div>
       )}
 
       {/* ===== DOCUMENTS TAB ===== */}

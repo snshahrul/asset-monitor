@@ -10,23 +10,31 @@ export default function InspectionCalendar({ assets }) {
   const today = new Date();
 
   return (
-    <div className="card p-4">
-      <div className="flex items-center justify-between mb-3">
-        <h4 className="font-bold text-white text-sm">📅 Calendar</h4>
-        <div className="flex gap-1">
-          <button onClick={() => setCd(new Date(y, m - 1, 1))} className="p-1 hover:bg-dark-600 rounded"><ChevronLeft size={14} className="text-gray-400" /></button>
-          <span className="text-white text-xs font-bold px-2">{mn}</span>
-          <button onClick={() => setCd(new Date(y, m + 1, 1))} className="p-1 hover:bg-dark-600 rounded"><ChevronRight size={14} className="text-gray-400" /></button>
+    <div className="card">
+      <div className="px-4 py-2.5 border-b border-dark-600 flex items-center justify-between">
+        <span className="section-header">Calendar</span>
+        <div className="flex items-center gap-1">
+          <button onClick={() => setCd(new Date(y, m - 1, 1))} className="btn-icon"><ChevronLeft size={13} className="text-gray-500" /></button>
+          <span className="text-xs font-semibold text-gray-300 w-28 text-center">{mn}</span>
+          <button onClick={() => setCd(new Date(y, m + 1, 1))} className="btn-icon"><ChevronRight size={13} className="text-gray-500" /></button>
         </div>
       </div>
-      <div className="grid grid-cols-7 gap-0.5">
-        {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => <div key={d} className="text-center text-xs text-gray-500 py-1">{d}</div>)}
-        {Array.from({ length: fd }).map((_, i) => <div key={'e'+i} className="h-8 bg-dark-800/50 rounded" />)}
-        {Array.from({ length: dim }).map((_, i) => {
-          const day = i + 1;
-          const isT = today.getDate() === day && today.getMonth() === m && today.getFullYear() === y;
-          return <div key={day} className={'h-8 rounded text-xs flex items-center justify-center ' + (isT ? 'bg-primary-900/30 border border-primary-800 text-white font-bold' : 'bg-dark-700 text-gray-400')}>{day}</div>;
-        })}
+      <div className="p-3">
+        <div className="grid grid-cols-7 gap-px">
+          {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => (
+            <div key={d} className="text-center text-2xs text-gray-600 py-1 font-semibold">{d}</div>
+          ))}
+          {Array.from({ length: fd }).map((_, i) => <div key={'e'+i} className="h-7 rounded" />)}
+          {Array.from({ length: dim }).map((_, i) => {
+            const day = i + 1;
+            const isT = today.getDate() === day && today.getMonth() === m && today.getFullYear() === y;
+            return (
+              <div key={day} className={'h-7 rounded text-2xs flex items-center justify-center ' + (isT ? 'bg-primary-800 text-white font-bold' : 'bg-dark-700/50 text-gray-400')}>
+                {day}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
