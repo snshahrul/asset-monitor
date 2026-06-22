@@ -1,0 +1,53 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #0f1117;
+  color: #e1e1e1;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  text-align: left;
+  min-height: 100vh;
+  background: #0f1117;
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl shadow-sm border;
+    background: #1a1d27;
+    border-color: #2a2d37;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 rounded-lg outline-none transition-all border;
+    background: #1a1d27;
+    border-color: #2a2d37;
+    color: #e1e1e1;
+  }
+  .input-field:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  }
+  
+  .select-field {
+    @apply w-full px-3 py-2 rounded-lg outline-none transition-all border;
+    background: #1a1d27;
+    border-color: #2a2d37;
+    color: #e1e1e1;
+  }
+  .select-field:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  }
+}
